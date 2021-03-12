@@ -2,7 +2,7 @@
 
 $TermID = Read-Host -Prompt 'Input TermID'
 Write-Host Opening PSSession to $TermID...
-$PSSession = New-PSSession $TermID 
+$PSSession = New-PSSession $TermID
 
 ### Pause to allow PSSession to connect prior to continuing
 
