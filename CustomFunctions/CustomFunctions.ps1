@@ -28,7 +28,11 @@ function New-EncryptionKey{
   #Create encryption key
   [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($EncryptionKey)
   #Save encryption key to provided file path
-  $EncryptionKey | Out-File $Path
+  if($Path){
+    $EncryptionKey | Out-File $Path
+  } else {
+    return $EncryptionKey
+  }
 }
 function New-ListBox{
   <#
@@ -104,7 +108,7 @@ function New-ListBox{
     exit
   }
 
-  return $form, $listBox
+  return $listBox.SelectedItem
 }
 
 function New-FileBrowser{
@@ -139,7 +143,7 @@ function New-FileBrowser{
     Start-Sleep -Seconds 3
     exit
   }
-  return $FileBrowser
+  return $FileBrowser.FileName
 }
 
 function New-CustomInput{
@@ -215,7 +219,7 @@ function New-CustomInput{
   $label.Text = $LabelText
   $form.Controls.Add($label)
 
-  if ($AsSecureString){
+  if ($AsSecureString -or $AsEncryptedString){
     $textBox = New-Object System.Windows.Forms.MaskedTextBox
     $textBox.PasswordChar = '*'
   } else {
@@ -240,12 +244,13 @@ function New-CustomInput{
     return ConvertTo-SecureString $text -AsPlainText -Force
   }
   if($result -eq [System.Windows.Forms.DialogResult]::OK -and $AsEncryptedString){
-    New-EncryptionKey -Path "~\encryption.key"
-    ConvertTo-SecureString $text -AsPlainText -Force |
-      ConvertFrom-SecureString -Key (Get-Content "~\encryption.key") |
-        Out-File -FilePath "~\encryptedstring.encrypted"
-    $EncryptionKey = "~\encryption.key"
-    $EncryptedString = "~\encryptedstring.encrypted"
+    # New-EncryptionKey -Path "~\encryption.key"
+    $EncryptionKey = New-EncryptionKey
+    $EncryptedString = ConvertTo-SecureString $text -AsPlainText -Force |
+      ConvertFrom-SecureString -Key $EncryptionKey
+        # | Out-File -FilePath "~\encryptedstring.encrypted"
+    # $EncryptionKey = "~\encryption.key"
+    # $EncryptedString = "~\encryptedstring.encrypted"
     Return @{
       EncryptionKey = $EncryptionKey;
       EncryptedString = $EncryptedString
@@ -270,9 +275,9 @@ function New-ElevatedPrompt{
   #>
   param(
     [Parameter(HelpMessage = "The Path For the Current Script File")]
-    [string]$Path,
-    [Parameter(HelpMessage = "Use this to provide credentials if needed")]
-    [pscredential]$Credentials
+    [string]$ScriptPath,
+    [Parameter(HelpMessage = "The Path of Functions to import")]
+    [string]$FunctionPath
   )
   #Check if current powershell session is running elevated
   if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
@@ -285,7 +290,7 @@ function New-ElevatedPrompt{
       as at this point the script will be running with their secondary level-2 account
       #>
       $UserName = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object username).username
-      #Get primary level-2 account credentials
+      # #Get primary level-2 account credentials
       $Credential = Get-Credential -UserName $UserName -Message "'Provide your Level-2 credentials.'"
       <#
       Map share drive with the provided primary level-2 credentials.
@@ -300,7 +305,7 @@ function New-ElevatedPrompt{
     Im not 100% sure why this works and calls the script?
     Potentially after the command line arguments are called it passes in the full script path which calls then executes the script
     #>
-    Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList "$CommandLine", "$Path"
+    Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList "$CommandLine", "$ScriptPath"
     #Exit current unelevated powershell session
     Exit
   }
@@ -338,42 +343,65 @@ function Update-Dependencies{
   #>
 
   param(
-    [Parameter(HelpMessage = "Use this to set the execution policy")]
     [string]$ExecutionPolicy,
-
-    [Parameter(HelpMessage = "Use this to specify the repository name")]
     [string]$RepositoryName,
-
-    [Parameter(HelpMessage = "Use this to set repository installation policy")]
     [string]$RepositoryPolicy,
-
-    [Parameter(HelpMessage = "Use this to install a PowerShell Module")]
     [string[]]$ModuleNames,
-
-    [Parameter(HelpMessage = "Use this to install a PowerShell Provider")]
-    [string[]]
-    $PackageProviders
+    [string[]]$PackageProviders,
+    [switch]$Verbose
   )
   #Check if package provider parameter was provided
   if($PackageProviders){
+    $_nugetUrl = "https://api.nuget.org/v3/index.json"
+    $packageSources = Get-PackageSource
+    if(@($packageSources).Where{$_.location -eq $_nugetUrl}.count -eq 0){
+      Register-PackageSource -Name MyNuGet -Location $_nugetUrl -ProviderName NuGet -Force
+    }
+    # if(!(Get-PackageProvider -Name))
     foreach($PackageProvider in $PackageProviders){
       #Get locally installed provider version
-      $LocalVersion = Get-PackageProvider -Name $PackageProvider -Force | Select-Object -ExpandProperty Version
+      if($Verbose){
+        Write-Host "Package Provider: $PackageProvider"
+        Write-Host "Getting locally installed version ..."
+      }
+      $LocalVersion = Get-PackageProvider -Name $PackageProvider -Force -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+      if($Verbose){
+        Write-Host "Locally installed version: $LocalVersion ..."
+      }
       #Get most recent version from repository
-      $RepositoryVersion = Find-PackageProvider -Name $PackageProvider | Select-Object -ExpandProperty Version
+      if($Verbose){
+        Write-Host "Getting version from repository..."
+      }
+      $RepositoryVersion = Find-PackageProvider -Name $PackageProvider -Force | Select-Object -ExpandProperty Version
+      if($Verbose){
+        Write-Host "Repository version: $RepositoryVersion ..."
+      }
       #Check if local version is less than repository version
       if($LocalVersion -lt $RepositoryVersion){
         #Install package provider from repository and save the version to a variable
-        $InstallationVersion = Install-PackageProvider -Name $PackageProvider -MinimumVersion $RepositoryVersion -Force | Select-Object -ExpandProperty Version
+        if($Verbose){
+          Write-Host "Installing package provider version: $RepositoryVersion ..."
+        }
+        $InstallationVersion = Install-PackageProvider -Name $PackageProvider -Force
+        $InstallationVersion
+        $InstallationVersion = $InstallationVersion | Select-Object -ExpandProperty Version
         #Display the package provider version that was installed
-        Write-Host "$PackageProvider updated to version: $InstallationVersion, Attempting to import new version ..."
+        if($Verbose){
+          Write-Host "$PackageProvider updated to version: $InstallationVersion ..."
+          Write-Host "Importing new version ..."
+        }
         #Import newly installed package provider and save version to a variable
-        $ImportVersion = Import-PackageProvider -Name $PackageProvider -Force | Select-Object -ExpandProperty Version
+        $ImportVersion = Import-PackageProvider -Name $PackageProvider -RequiredVersion $RepositoryVersion -Force
+        # | Select-Object -ExpandProperty Version
         #Display the package provider version that was imported
-        Write-Host "$PackageProvider Version: $ImportVersion imported successfully ..."
+        if($Verbose){
+          Write-Host "$PackageProvider Version: $ImportVersion imported successfully ..."
+        }
       } else {
         #Display installed version
-        Write-Host "$PackageProvider Version: $LocalVersion"
+        if($Verbose){
+          Write-Host "$PackageProvider Version: $LocalVersion ..."
+        }
       }
     }
   }
@@ -405,7 +433,7 @@ function Update-Dependencies{
   if($ModuleNames){
     foreach($ModuleName in $ModuleNames){
       #Check if specified module is already installed
-      if(Get-InstalledModule -Name $ModuleName){
+      if(Get-InstalledModule -Name $ModuleName -ErrorAction SilentlyContinue){
         Write-Host "Module Installed: $ModuleName..."
       } else {
         #Install the specified module
@@ -452,13 +480,48 @@ function Remove-BiosPassword{
 
   #>
   param(
-    [securestring]$BiosPassword,
-    [string[]]$Scope,
-    [string]$Manufacturer
+    [string]$BiosPassword,
+    [array]$EncryptionKey,
+    [string]$Scope,
+    [string]$Manufacturer,
+    [switch]$Verbose
   )
-  if($BiosPassword.EncryptionKey){
-    $EncryptionKey = Get-Content $BiosPassword.EncryptionKey
-    $BiosPassword = Get-Content $BiosPassword.EncryptedString | ConvertTo-SecureString -Key $EncryptionKey
+  if($Verbose){
+    Write-Host "Verbose Logging: True"
+    Write-Host "Running Bios Removal Function..."
+    Write-Host "Current Variables:"
+    if($Scope){
+      Write-Host "Scope Set: True"
+    } else {
+      Write-Host "Scope Set: False"
+    }
+    if($Manufacturer){
+      Write-Host "Manufacturer Set: True"
+    } else {
+      Write-Host "Manufacturer Set: False"
+    }
+    if($BiosPassword){
+      Write-Host "Bios Password Set: True"
+    } else {
+      Write-Host "Bios Password Set: False"
+    }
+    if($EncryptionKey){
+      Write-Host "Encrytpion Key Set: True"
+    } else {
+      Write-Host "Encryption Key Set: False"
+    }
+  }
+  if($EncryptionKey){
+    # $EncryptionKey = Get-Content $EncryptionKey
+    if($Verbose){
+      if($EncryptionKey){
+        Write-Host "Decrypting Bios Password ..."
+      }
+    }
+    [securestring]$BiosPassword = ConvertTo-SecureString -String $BiosPassword -Key $EncryptionKey
+    if($Verbose){
+      Write-Host "Bios Password Decrypted: True"
+    }
   }
   #Check manufacturer
   if($Manufacturer -like "dell*"){
@@ -471,7 +534,7 @@ function Remove-BiosPassword{
       Write-Host "Bios Password is set, Attempting to remove bios password ..."
       #Remove bios password by setting to an empty string
       #Documentation:
-      Set-Item DellSmbios:\Security\AdminPassword -Value ""  -PasswordSecure $BiosPasswordSecure
+      Set-Item DellSmbios:\Security\AdminPassword -Value ""  -PasswordSecure $BiosPassword
       #Re-Check if bios password is set to confirm removal
       $BiosPasswordSet = Get-ChildItem DellSmbios:\Security\IsAdminPasswordSet
       #Display current value
@@ -502,10 +565,13 @@ function Remove-BiosPassword{
     }
   }
   #Clean up variables
-  Remove-Variable -Name "BiosPasswordPlainText", "EncryptionKey", "BiosPassword"
+  if($EncryptionKey){
+    Remove-Variable -Name "EncryptionKey"
+  }
+  if($BiosPasswordPlainText){
+    Remove-Variable -Name "BiosPasswordPlainText"
+  }
+  if($BiosPassword){
+    Remove-Variable -Name "BiosPassword"
+  }
 }
-
-
-
-
-

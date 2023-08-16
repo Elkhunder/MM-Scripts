@@ -21,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -Split computers string by commas or spaces
 
 ### Changed
-
+-Variables $Computers, $ScriptPath, $CustomFunctionPath were all changed to args which are being passed in as arguments in the invoke-command in the launcher.  $args[0] holds the command path and name, $args[1] hold the computer names and the scope, $args[2] holds the custom function name and path
 ### Removed
+-Custom Functions, all custom functions were moved to the launcher
 
 ### Fixed

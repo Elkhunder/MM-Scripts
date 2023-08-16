@@ -1,0 +1,3 @@
+Completed Scripts
+Set-NetworkProfileCategory
+Clear-BiosPassword
