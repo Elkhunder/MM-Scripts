@@ -5,18 +5,22 @@ $logType = "Both"  # Change to "Failure" for logging failures, "Success" for log
 # loop indefinitely
 while($true) {
   $ping = Test-Connection -ComputerName $IPaddress -Count 1 -Quiet
+
+  # Create the log message
+  if($ping) {
+    $logMessage = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $IPaddress is reachable"
+  } else {
+    $logMessage = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $IPaddress is unreachable"
+  }
   
   if($ping -and ($mode -eq "Success" -or $mode -eq "Both")) {
     # write current date/time and IP to logfile with a success message
-    $successLog = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $IPaddress is reachable"
-    $successLog | Out-File -Append -FilePath $logfile
-    Write-Output $successLog
+    $logMessage | Out-File -Append -FilePath $logfile
   } 
   elseif(-not $ping -and (($mode -eq "Failure") -or $mode -eq "Both")) {
     # write current date/time and IP to logfile with a failure message
-    $failureLog = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $IPaddress is unreachable"
-    $failureLog | Out-File -Append -FilePath $logfile
-    Write-Output $failureLog
+    $logMessage | Out-File -Append -FilePath $logfile
   }
+  Write-Output $logMessage
   Start-Sleep -Seconds 1800  # wait 1800 seconds (30 minutes) before next ping
 }
