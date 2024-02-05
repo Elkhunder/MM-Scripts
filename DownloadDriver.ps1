@@ -6,9 +6,6 @@
 .PARAMETER ComputerName
   One or more computer names to copy driver files to.
 
-.PARAMETER FolderPrompt
-  Switch to enable a folder prompt allowing selection of where files are placed. Default is disabled.
-
 .INPUTS
   None
   
@@ -20,7 +17,7 @@
   Creation Date:  1/22/2024
   Purpose/Change: Initial script development
 .EXAMPLE
-  .\DownloadDrivers.ps1 -ComputerName Computer1,Computer2 -FolderPrompt:$true
+  .\DownloadDrivers.ps1 -ComputerName Computer1,Computer2
 
   Downloads drivers to Computer1 and Computer2 and prompts the user to select a folder to copy the files to.
 
