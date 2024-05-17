@@ -16,6 +16,30 @@
   Author:         Jonathon Sissom
   Creation Date:  1/22/2024
   Purpose/Change: Initial script development
+  Supported Adapters:
+    Intel® Wi-Fi 7 BE202
+    Intel® Wi-Fi 7 BE200
+    Intel® Wi-Fi 6E AX411 (Gig+)
+    Intel® Wi-Fi 6E AX211 (Gig+)
+    Intel® Wi-Fi 6E AX210 (Gig+) IOT Industrial Kit
+    Intel® Wi-Fi 6E AX210 (Gig+) IOT Embedded Kit
+    Intel® Wi-Fi 6E AX210 (Gig+)
+    Intel® Wi-Fi 6 (Gig+) Desktop Kit
+    Intel® Wi-Fi 6 AX203
+    Intel® Wi-Fi 6 AX201
+    Intel® Wi-Fi 6 AX200
+    Intel® Wi-Fi 6 AX101
+    Intel® Wireless-AC 9560
+    Intel® Wireless-AC 9461
+    Intel® Wireless-AC 9462
+    Intel® Wireless-AC 9260
+    Intel® Dual Band Wireless-AC 9260 IoT Kit
+    Intel® Dual Band Wireless-AC 3168
+    Intel® Dual Band Wireless-AC 3165
+    Intel® Dual Band Wireless-AC 7265 (Rev D)
+    Intel® Dual Band Wireless-N 7265(Rev D)
+    Intel® Wireless-N 7265 (Rev D)
+    Intel® Tri-Band Wireless-AC 17265 
 .EXAMPLE
   .\DownloadDrivers.ps1 -ComputerName Computer1,Computer2
 
