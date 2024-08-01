@@ -86,8 +86,14 @@ param (
 
 #---------------------------------------------------------[Initialisations]--------------------------------------------------------
 Add-Type -AssemblyName System.Windows.Forms
-$url = "https://downloadmirror.intel.com/812775/WiFi-23.20.0-Driver64-Win10-Win11.zip"
-$dest = "C:\Users\Public\Downloads"
+$version = "23.60.1"
+# Url identifier is the number that follows the base url, in the url below that would be 825733
+# https://downloadmirror.intel.com/825733/WiFi-23.60.1-Driver64-Win10-Win11.zip
+$urlIdentifier = "825733"
+$url = "https://downloadmirror.intel.com/$urlIdentifier/WiFi-$version-Driver64-Win10-Win11.zip"
+
+$downloadDestination = "C:\Users\Public\Downloads\WiFi-$version-Driver64-Win10-Win11.zip"
+$expandDestination = "C:\Users\Public\Downloads\WiFi-$version-Driver64-Win10-Win11"
 
 # $owner = [Win32Window]::new([System.Diagnostics.Process]::GetCurrentProcess().MainWindowHandle)
 
@@ -97,9 +103,8 @@ $dest = "C:\Users\Public\Downloads"
 #     $FolderBrowser.ShowNewFolderButton = $true
 #     $FolderBrowser.Description = "Select a folder to copy drivers to."
 #     $FolderBrowser.ShowDialog($owner) | Out-Null
-#     $dest = $FolderBrowser.SelectedPath
+#     $downloadDestination = $FolderBrowser.SelectedPath
 # }
-Write-Log "Copying drivers to $dest" -LogPath $LogPath -ToOut
 
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "Inquire"
@@ -164,18 +169,19 @@ Function Get-DriverFiles {
 
     param (
         [Parameter(Mandatory=$true)][System.Management.Automation.Runspaces.PSSession]$Session,
-        [Parameter(Mandatory=$true)][System.IO.FileInfo]$dest,
+        [Parameter(Mandatory=$true)][System.IO.FileInfo]$downloadDestination,
+        [Parameter(Mandatory=$true)][System.IO.FileInfo]$expandDestination,
         [Parameter(Mandatory=$true)][string]$url
     )
     Write-Log "Downloading drivers to $ComputerName" -LogPath $LogPath -ToOut
     Invoke-Command -Session $Session -ScriptBlock {
-        Start-BitsTransfer -Source $using:url -Destination $using:dest
+        Start-BitsTransfer -Source $using:url -Destination $using:downloadDestination -ErrorAction SilentlyContinue
         #unzip file
-        Expand-Archive -Path "$using:dest/WiFi-23.20.0-Driver64-Win10-Win11.zip" -DestinationPath $using:dest -Force
+        Expand-Archive -Path $using:downloadDestination -DestinationPath $using:expandDestination -Force
         #remove zip file
-        Remove-Item -Path "$using:dest/WiFi-23.20.0-Driver64-Win10-Win11.zip" -Force
+        Remove-Item -Path $using:downloadDestination -Force
     }
-    Write-Log "Drivers downloaded to $ComputerName at $dest/WiFi-23.20.0-Driver64-Win10-Win11" -LogPath $LogPath -ToOut
+    Write-Log "Drivers downloaded to $ComputerName at $expandDestination" -LogPath $LogPath -ToOut
 }
 
 #---------------------------------------------------------[Script Start]-----------------------------------------------------------
@@ -187,10 +193,9 @@ foreach ($Computer in $ComputerName) {
       $Session = New-PSSession -ComputerName $ComputerName -Credential $Credential -ErrorAction SilentlyContinue
       Write-Log "Connected to $ComputerName" -LogPath $LogPath -ToOut
         if ($Session) {
-            Get-DriverFiles -Session $Session -dest $dest -url $url
+            Get-DriverFiles -Session $Session -downloadDestination $downloadDestination -expandDestination $expandDestination -url $url
             Remove-PSSession -Session $Session -ErrorAction SilentlyContinue
             Write-Log "Disconnected from $ComputerName" -LogPath $LogPath -ToOut
         }
     }
 }
-
