@@ -29,13 +29,13 @@ foreach ($Computer in $Computers.Split(",").Trim()){
             $Session = New-CimSession -Credential $Credential -ComputerName $Computer
             $Win32_OperatingSystem = Get-CimInstance -CimSession $Session -ClassName Win32_OperatingSystem
 
-            $deviceInfo = [PSCustomObject]@{
+            $DeviceInfo = [PSCustomObject]@{
                 'Computer' = $Computer
                 'OS Name' = $Win32_OperatingSystem.Caption
                 'OS Version' = $WinVersionMap[$Win32_OperatingSystem.BuildNumber]
             }
 
-            $deviceInfoList += $deviceInfo
+            $deviceInfoList += $DeviceInfo
         }
         catch {
             Write-Error "Failed to retrieve OS Information from $Computer. Error: $_"
@@ -45,4 +45,6 @@ foreach ($Computer in $Computers.Split(",").Trim()){
         Write-Error "$Computer is unreachable"
     }
 }
+$DeviceInfoList | Format-Table -AutoSize
+
 Read-Host "Press any key to exit"
