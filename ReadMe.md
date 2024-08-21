@@ -2,7 +2,7 @@
 
 ## Installation
 
-Ensure that git is installed on your system.  If you need help installing you can reference git's [documentation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).  If you clone this repository to a location that is in your [PSModulePath](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath?view=powershell-7.4) variable all Functions and Modules will be available for [Auto Loading](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7.4#module-autoloading).
+Ensure that git is installed on your system.  If you need help installing you can reference git's [documentation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).  If you clone this repository to a location that is in your [PSModulePath](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath?view=powershell-7.4) variable all Modules will be available for [Auto Loading](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7.4#module-autoloading).
 
 1. Navigate to your desired directory
 
@@ -13,6 +13,14 @@ Ensure that git is installed on your system.  If you need help installing you ca
 2. Clone the respository
 
     ```powershell
+    git clone https://github.com/Elkhunder/MM-Scripts.git
+    ```
+
+3. Clone repository to a location in the PSModulePath
+
+    ```powershell
+    $psModulePath = $env:PsModulePath.split(';')[0]
+    Set-Location -Path $psModulePath
     git clone https://github.com/Elkhunder/MM-Scripts.git
     ```
 
