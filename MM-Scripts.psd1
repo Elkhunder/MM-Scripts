@@ -6,7 +6,7 @@
 
     # List of nested modules
     NestedModules = @(
-        "$PSScriptRoot\CustomModules\Get-WindowsVersion\Get-WindowsVersion.psm1"
+        "$PSScriptRoot\CustomModules"
         # Add more modules as needed
     )
 }
