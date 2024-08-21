@@ -1,7 +1,7 @@
 ﻿<#
 
 ************************** Change Log ******************************
-************************** Version 3 *******************************
+************************** Version 1 *******************************
 
 ** Added propmt for printer name and assigning name to a variable **
 ** Added changing default printer to the newly named local printer *
