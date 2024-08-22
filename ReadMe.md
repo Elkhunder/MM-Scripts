@@ -32,7 +32,7 @@ Ensure that git is installed on your system.  If you need help installing you ca
     Set-Location -Path 'C:\path\to\your\directory'`
     ```
 
-2. Fetch the updates
+2. Pull the updates from upsteam repository
 
     ```powershell
     git pull
