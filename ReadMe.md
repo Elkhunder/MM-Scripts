@@ -105,6 +105,10 @@ _The `Watch-DeviceStatus` function monitors the online status of specified compu
   - **Description**: Indicates that a file containing the list of computer names should be used instead of specifying them directly. Prompts the user to select a file if this switch is used. When this switch is used, the `ComputerName` parameter is bypassed.
   - **Type**: [`Switch`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters?view=powershell-7.4#switch-parameters) - A Boolean flag that is either true when specified or false when omitted.
 
+- **Sound**
+  - **Description**: The `Sound` parameter specifies the type of sounds to be used for the toast notification.  It is a mandatory parameter and must be one of the predefined sound types listed in the ValidateSet attribute. This restriction ensures that only valid sound types are assigned to the parameter, helping to prevent errors and maintain consistency. 
+  - **Default Value**: `'Default'`
+
 - **IntervalSeconds**
   - **Description**: Specifies the interval, in seconds, between each status check for the computers. This parameter is optional, with a default value of 30 seconds.
   - **Type**: [`int`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#423-integer) - An integer representing the number of seconds between checks.
@@ -147,7 +151,7 @@ _The `Watch-DeviceStatus` function monitors the online status of specified compu
     Watch-DeviceStatus -UseInFile -IntervalSeconds 20 -TimeoutMinutes 45
     ```
 
-5. **Managing Jobs Created by Watch-DeviceStatus**
+<!-- 5. **Managing Jobs Created by Watch-DeviceStatus**
 
 Since Watch-DeviceStatus runs in the background using jobs, you can manage these jobs with the following cmdlets:
 
@@ -199,7 +203,7 @@ Since Watch-DeviceStatus runs in the background using jobs, you can manage these
     Get-Job -Name 'Monitor_*' | Foreach-Object {
         Receive-Job -Job $_ -Wait -AutoRemove | Write-Output
     }
-    ```
+    ``` -->
 
 #### Notes
 
