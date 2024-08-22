@@ -36,6 +36,7 @@ Ensure that git is installed on your system.  If you need help installing you ca
 
     ```powershell
     git fetch
+    git pull
     ```
 
 ## Usage
