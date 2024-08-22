@@ -48,16 +48,20 @@ _The `Get-WindowsVersion` function gathers information about the Windows operati
 
 - **ComputerName**
   - **Description**: Specifies a list of computer names that the script will operate on. This parameter accepts an array of strings, allowing you to provide multiple computer names to be processed.
-  - **Type**: [`string[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects
+  - **Type**: [`String[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects
+  - **Mandatory**: `True`
 - **Credential**
   - **Description**: Provides the credentials used for authentication when connecting to remote computers. This parameter accepts a PSCredential object, which typically includes a username and password.  See Microsoft's docs for [`Get-Credential`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/get-credential?view=powershell-7.4) for more info.  If you attempt to access a remote device without providing a credential, you will be prompted to enter one.
   - **Type**: [`PSCredential`](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.pscredential?view=powershellsdk-7.4.0) - Securely stores a username and password
+  - **Mandatory**: `False`
 - **UseInFile**
   - **Description**: Indicates that a file containing the list of computer names should be used instead of specifying them directly. Prompts the user to select a file if this switch is used.
   - **Type**: [`Switch`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters?view=powershell-7.4#switch-parameters) - Boolean flag that is either true when specified or false when omitted
+  - **Mandatory**: `True`
 - **UseOutFile**
   - **Description**: Indicates that output should be save to a file instead of printed to the console.
   - **Type**: [`Switch`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters?view=powershell-7.4#switch-parameters) - Boolean flag that is either true when specified or false when omitted
+  - **Mandatory**: `False`
 
 #### Examples
 
@@ -99,23 +103,31 @@ _The `Watch-DeviceStatus` function monitors the online status of specified compu
 
 - **ComputerName**
   - **Description**: Specifies a list of computer names to be monitored. This parameter is mandatory unless the `UseInFile` switch is specified. It accepts an array of strings, allowing multiple computer names to be monitored simultaneously.
-  - **Type**: [`string[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
+  - **Type**: [`String[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
+  - **Mandatory**: `True`
 
 - **UseInFile**
   - **Description**: Indicates that a file containing the list of computer names should be used instead of specifying them directly. Prompts the user to select a file if this switch is used. When this switch is used, the `ComputerName` parameter is bypassed.
   - **Type**: [`Switch`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters?view=powershell-7.4#switch-parameters) - A Boolean flag that is either true when specified or false when omitted.
+  - **Mandatory**: `True`
 
 - **Sound**
-  - **Description**: The `Sound` parameter specifies the type of sounds to be used for the toast notification.  It is a mandatory parameter and must be one of the predefined sound types listed in the ValidateSet attribute. This restriction ensures that only valid sound types are assigned to the parameter, helping to prevent errors and maintain consistency. 
+  - **Description**: Specifies the type of sounds to be used for the toast notification.  One of the predefined sound types listed in the ValidateSet attribute must be used. This restriction ensures that only valid sound types are assigned to the parameter, helping to prevent errors and maintain consistency.
+  - **Type**: [`String`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
   - **Default Value**: `'Default'`
+  - **Mandatory**: `False`
 
 - **IntervalSeconds**
   - **Description**: Specifies the interval, in seconds, between each status check for the computers. This parameter is optional, with a default value of 30 seconds.
-  - **Type**: [`int`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#423-integer) - An integer representing the number of seconds between checks.
+  - **Type**: [`Int`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#423-integer) - An integer representing the number of seconds between checks.
+  - **Default Value**: `30`
+  - **Mandatory**: `False`
 
 - **TimeoutMinutes**
   - **Description**: Specifies the maximum time, in minutes, to wait for a computer to come online before timing out. This parameter is optional, with a default value of 60 minutes.
-  - **Type**: [`int`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#423-integer) - An integer representing the number of minutes to wait before timing out.
+  - **Type**: [`Int`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#423-integer) - An integer representing the number of minutes to wait before timing out.
+  - **Default Value**: `60`
+  - **Mandatory**: `False`
 
 #### Examples
 
