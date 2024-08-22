@@ -186,7 +186,8 @@ function Get-WindowsVersion{
         }
 
         if ($File.FileName){
-            return $DeviceInfoList | Out-File -FilePath $File.FileName
+            $DeviceInfoList | Out-File -FilePath $File.FileName
+            return Write-Output "Output saved to file: $($File.FileName)"
         }
     }
     return $DeviceInfoList
