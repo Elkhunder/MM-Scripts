@@ -106,13 +106,6 @@ function Get-WindowsVersion{
                 }
             }
         }
-        
-        # if ($file.FileName) {
-        #     # If the user finally selected a file, proceed with your logic here
-        #     Write-Host "Selected file: $($file.FileName)"
-        # } else {
-        #     Write-Host "No file selected."
-        # }
 
         if ($File.FileName){
             [string[]]$ComputerName = $(Get-Content -Path $File.FileName)
@@ -182,9 +175,19 @@ function Get-WindowsVersion{
             $File.Filter = "CSV Files (*.csv)|*.csv"
             $File.FilterIndex = 1
             $File.OverwritePrompt = $true
-        $FileDialog = $File.ShowDialog($Form)
+        while ($File.ShowDialog($Form) -ne [System.Windows.Forms.DialogResult]::OK){
+            $response = [System.Windows.Forms.MessageBox]::Show("You pressed Cancel. Do you want to try again?", "File Selection", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+        
+            # If the user selects "No" on the message box, exit the loop
+            if ($response -eq [System.Windows.Forms.DialogResult]::No) {
+                Write-Output "File export cancelled by user"
+                break
+            }
+        }
 
-        $DeviceInfoList | Out-File -FilePath $File.FileName
+        if ($File.FileName){
+            return $DeviceInfoList | Out-File -FilePath $File.FileName
+        }
     }
     return $DeviceInfoList
 }
