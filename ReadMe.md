@@ -35,7 +35,6 @@ Ensure that git is installed on your system.  If you need help installing you ca
 2. Fetch the updates
 
     ```powershell
-    git fetch
     git pull
     ```
 
