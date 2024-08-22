@@ -99,18 +99,12 @@ Get-WindowsVersion -ComputerName 'localhost'
 
 _The `Watch-DeviceStatus` function monitors the online status of specified computers and sends a notification when a device comes online. It allows users to specify a list of computer names directly or prompt for a file containing computer names. The function runs in the background, continuously checking each device's status at specified intervals and timing out after a set period._
 
-### Parameters
+#### Parameters
 
-#### ComputerName
-
-##### Description
-
-Specifies a list of computer names to be monitored. This parameter is mandatory unless the `UseInFile` switch is specified. It accepts an array of strings, allowing multiple computer names to be monitored simultaneously.
-
-##### Properties
-
-- **Type**: [`String[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
-- **Mandatory**: `True`
+- **ComputerName**
+  - **Description**: Specifies a list of computer names to be monitored. This parameter is mandatory unless the `UseInFile` switch is specified. It accepts an array of strings, allowing multiple computer names to be monitored simultaneously.
+  - **Type**: [`String[]`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
+  - **Mandatory**: `True`
 
 - **UseInFile**
   - **Description**: Indicates that a file containing the list of computer names should be used instead of specifying them directly. Prompts the user to select a file if this switch is used. When this switch is used, the `ComputerName` parameter is bypassed.
