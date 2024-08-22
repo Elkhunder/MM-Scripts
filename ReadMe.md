@@ -116,6 +116,32 @@ _The `Watch-DeviceStatus` function monitors the online status of specified compu
   - **Type**: [`String`](https://learn.microsoft.com/en-us/powershell/scripting/lang-spec/chapter-04?view=powershell-7.4#431-strings) - An array of string objects.
   - **Default Value**: `'Default'`
   - **Mandatory**: `False`
+  - **Accepted Values**
+    - `'Default'`
+    - `'IM'`
+    - `'Mail'`
+    - `'Reminder'`
+    - `'SMS'`
+    - `'Alarm'`
+    - `'Alarm2'`
+    - `'Alarm3'`
+    - `'Alarm4'`
+    - `'Alarm5'`
+    - `'Alarm6'`
+    - `'Alarm7'`
+    - `'Alarm8'`
+    - `'Alarm9'`
+    - `'Alarm10'`
+    - `'Call'`
+    - `'Call2'`
+    - `'Call3'`
+    - `'Call4'`
+    - `'Call5'`
+    - `'Call6'`
+    - `'Call7'`
+    - `'Call8'`
+    - `'Call9'`
+    - `'Call10'`
 
 - **IntervalSeconds**
   - **Description**: Specifies the interval, in seconds, between each status check for the computers. This parameter is optional, with a default value of 30 seconds.

@@ -100,7 +100,7 @@ function Watch-DeviceStatus {
         [Parameter(Mandatory = $true, ParameterSetName = 'ByFile')]
         [switch]$UseInFile,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet('Default',
                      'IM',
                      'Mail',

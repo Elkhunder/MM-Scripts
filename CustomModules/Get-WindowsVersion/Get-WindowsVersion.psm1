@@ -34,23 +34,27 @@ Get-WindowsVersion -UseInFile -UseOutFile
 Prompts the user to select a file containing computer names and then saves the results to a specified output file.
 #>
 function Get-WindowsVersion{
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param (
         # List of computer names
-        [Parameter()]
+        [Parameter(Mandatory = $true,
+                   ParameterSetName = 'ByName')]
         [string[]]
         $ComputerName,
 
         # Secondary Credentials
-        [Parameter()]
+        [Parameter(Mandatory = $false)]
         [System.Management.Automation.Credential()]
         [PSCredential]$Credential,
         
         # Prompt for a file instead of using a list of computer names
+        [Parameter(Mandatory = $true,
+                   ParameterSetName = 'ByFile')]
         [switch]
         $UseInFile,
 
         # Write to file instead of console
+        [Parameter(Mandatory = $false)]
         [switch]
         $UseOutFile
     )
