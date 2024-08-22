@@ -184,7 +184,7 @@ function Get-WindowsVersion{
             $File.OverwritePrompt = $true
         $FileDialog = $File.ShowDialog($Form)
 
-        $DeviceInfoList | Format-Table -AutoSize | Out-File -FilePath $File.FileName
+        $DeviceInfoList | Out-File -FilePath $File.FileName
     }
-    return $DeviceInfoList | Format-Table -AutoSize
+    return $DeviceInfoList
 }
