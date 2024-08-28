@@ -126,7 +126,7 @@ function Watch-DeviceStatus {
                      'Call8',
                      'Call9',
                      'Call10')]
-        [String] $Sound = 'Default', 
+        [String]$Sound = 'Default', 
 
         [Parameter(Mandatory = $false)]
         [int]$IntervalSeconds = 30,
