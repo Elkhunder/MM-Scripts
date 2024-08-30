@@ -12,14 +12,23 @@ function New-CustomProtocol {
     # Name of the custom URL protocol
     [Parameter(Mandatory = $true)]
     [String]
-    $ProtocolName
+    $ProtocolName,
+    # Switch to run as admin
+    [Parameter(Mandatory = $false)]
+    [switch]
+    $AsAdmin
   )
+  Import-Module ./CustomFunctions/CustomFunctions.ps1
+  
+  New-FileBrowser -InitialDirectory 'Program Files' -Filter 'All Files (*.*)|*.*'
+
   # Use Get-ChildItem to search for the file
   $file = Get-ChildItem -Path $SearchPath -Filter $FileName -ErrorAction SilentlyContinue
   if ($file) {
     # Modify the protocol name if the -AsAdmin switch is specified
     if ($AsAdmin) {
       $ProtocolName = "$($ProtocolName)-admin"
+      Write-Verbose "Protocol name updated: ${ProtocolName}"
     }
     # Create the custom URL protocol
     New-Item `
